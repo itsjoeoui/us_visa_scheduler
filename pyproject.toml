@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "us-visa-scheduler"
+version = "0.1.0"
+description = ""
+authors = ["Joey Yu <joey@jyu.dev>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.27.1"
+selenium = "^4.2.0"
+webdriver-manager = "^4.0.2"
+sendgrid = "^6.9.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

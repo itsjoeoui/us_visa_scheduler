@@ -1,4 +1,5 @@
 import time
+import traceback
 import json
 import random
 import requests
@@ -31,7 +32,7 @@ SCHEDULE_ID = config['PERSONAL_INFO']['SCHEDULE_ID']
 PRIOD_START = config['PERSONAL_INFO']['PRIOD_START']
 PRIOD_END = config['PERSONAL_INFO']['PRIOD_END']
 # Embassy Section:
-YOUR_EMBASSY = config['PERSONAL_INFO']['YOUR_EMBASSY'] 
+YOUR_EMBASSY = config['PERSONAL_INFO']['YOUR_EMBASSY']
 EMBASSY = Embassies[YOUR_EMBASSY][0]
 FACILITY_ID = Embassies[YOUR_EMBASSY][1]
 REGEX_CONTINUE = Embassies[YOUR_EMBASSY][2]
@@ -213,7 +214,7 @@ def get_available_date(dates):
         result = ( PED > new_date and new_date > PSD )
         # print(f'{new_date.date()} : {result}', end=", ")
         return result
-    
+
     PED = datetime.strptime(PRIOD_END, "%Y-%m-%d")
     PSD = datetime.strptime(PRIOD_START, "%Y-%m-%d")
     for d in dates:
@@ -238,7 +239,7 @@ else:
 if __name__ == "__main__":
     first_loop = True
     while 1:
-        LOG_FILE_NAME = "log_" + str(datetime.now().date()) + ".txt"
+        LOG_FILE_NAME = "log_" + str(datetime.now().date()) + ".log"
         if first_loop:
             t0 = time.time()
             total_time = 0
@@ -273,7 +274,7 @@ if __name__ == "__main__":
                     # A good date to schedule for
                     END_MSG_TITLE, msg = reschedule(date)
                     break
-                RETRY_WAIT_TIME = random.randint(RETRY_TIME_L_BOUND, RETRY_TIME_U_BOUND)
+                RETRY_WAIT_TIME = random.randint(int(RETRY_TIME_L_BOUND), int(RETRY_TIME_U_BOUND))
                 t1 = time.time()
                 total_time = t1 - t0
                 msg = "\nWorking Time:  ~ {:.2f} minutes".format(total_time/minute)
@@ -290,7 +291,9 @@ if __name__ == "__main__":
                     print(msg)
                     info_logger(LOG_FILE_NAME, msg)
                     time.sleep(RETRY_WAIT_TIME)
-        except:
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
             # Exception Occured
             msg = f"Break the loop after exception!\n"
             END_MSG_TITLE = "EXCEPTION"
@@ -298,7 +301,7 @@ if __name__ == "__main__":
 
 print(msg)
 info_logger(LOG_FILE_NAME, msg)
-send_notification(END_MSG_TITLE, msg)
+# send_notification(END_MSG_TITLE, msg)
 driver.get(SIGN_OUT_LINK)
 driver.stop_client()
 driver.quit()
